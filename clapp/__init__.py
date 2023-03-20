@@ -87,6 +87,18 @@ print(t.a, t.b, t.c) # 3 0.5 0.4
 print(t.t.inner) # 0.6
 print(t.d_) # 0
 ```
+*flags*
+```python
+from clapp import parser
+
+@parser
+class Test:
+    a_: bool
+    b_: bool
+
+# when called with the command line arguments "-a"
+t = Test()
+print(t.a, t.b) # True False
 """
 
 import sys
