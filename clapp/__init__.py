@@ -62,7 +62,7 @@ class Test:
     c: float = 0.4
 
     # custom parser for the argument "a"
-    def _parse_a(self, arg: str) -> int:
+    def _parse_a(arg: str) -> int:
         return int(arg) + 1
     
     # custom parser for all the arguments of type float
@@ -123,6 +123,7 @@ def parser(**kwargs):
             used_short = []
             # Adding the arguments to the parser
             for (name, typ, default_val, parser_fn) in attrs.items():
+                parser_fn = lambda x: parser_fn(self, x) if parser_fn is not None else None
                 add_arg(self._parser, name, typ, default_val, used_short, parser_fn)
 
             # Parsing the arguments
