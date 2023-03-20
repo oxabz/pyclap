@@ -13,12 +13,22 @@ def add_arg(parser: ArgumentParser, attr: str, typ:type, default:Any, used_short
         for i in range(len(attr)):
             if (short := attr[i]) not in used_short and short != '_':
                 break
+
+        # handling flags
+        if typ == bool:
+            if short is None:
+                parser.add_argument(f"--{attr}", action="store_true")
+            else:
+                parser.add_argument(f"-{short}", f"--{attr}", action="store_true")
+                return short
+            return None    
+        
         if short is None: 
             parser.add_argument(f"--{attr}", type=parse, default=default, required=default is None)
         else:
             parser.add_argument(f"-{short}", f"--{attr}", type=parse, default=default, required=default is None)
             return short
-          
+        
     else:
         parser.add_argument(attr, type=parse)
     

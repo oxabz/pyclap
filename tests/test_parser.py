@@ -93,3 +93,21 @@ def test_custom_parsers():
     assert t.d.inner == 0.4
     assert t.hello == "hello matt!"
     assert t.e_ == 0
+
+def test_usage_flags():
+    @clapp.parser()
+    class Test:
+        a_: bool
+        b_: bool
+    
+    t = Test(["-a"])
+    assert t.a_ == True
+    assert t.b_ == False
+
+    t = Test(["-b"])
+    assert t.a_ == False
+    assert t.b_ == True
+
+    t = Test(["-a", "-b"])
+    assert t.a_ == True
+    assert t.b_ == True
