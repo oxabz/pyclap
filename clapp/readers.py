@@ -9,7 +9,7 @@ def get_attributes(cls) -> List[Tuple[str, type, Any, Optional[Callable]]]:
     """
     attrs = cls.__annotations__
 
-    return [(name, typ, getattr(cls, name, None), get_type_parser(cls, typ) or get_arg_parser(cls, name)) for name, typ in attrs.items()]
+    return [(name, typ, getattr(cls, name, None),  get_arg_parser(cls, name) or get_type_parser(cls, typ)) for name, typ in attrs.items()]
 
 
 def get_type_parser(cls, typ: type) -> Optional[Callable]:

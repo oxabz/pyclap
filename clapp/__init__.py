@@ -38,15 +38,15 @@ from clapp import parser
 
 @parser
 class Test:
-    a: int = 2
-    b: float = 0.4
-    c: str = "test"
+    a: int # a positional argument cant have a default value
+    b: float
+    c_: str = "test"
 
-# when called with the command line arguments ""
+# when called with the command line arguments "2 0.4"
 t = Test()
 print(t.a, t.b, t.c) # 2 0.4 test
 
-# when called with the command line arguments "4 0.7 hello"
+# when called with the command line arguments "4 0.7 -c hello"
 t = Test()
 print(t.a, t.b, t.c) # 4 0.7 hello
 ```
@@ -56,26 +56,37 @@ print(t.a, t.b, t.c) # 4 0.7 hello
 from clapp import parser
 
 @parser
+class TestType:
+    inner: float
+
+    def __init__(self, s: str) -> None:
+        self.inner = float(s)
+
 class Test:
-    a: int = 2
-    b: float = 0.4
-    c: float = 0.4
+    a: int
+    b: float
+    c: float
+    t: TestType
+    d_: int = 0
 
     # custom parser for the argument "a"
     def _parse_a(arg: str) -> int:
         return int(arg) + 1
     
     # custom parser for all the arguments of type float
-    def _parse_float(self, arg: str) -> float:
+    def _parse_float(arg: str) -> float:
         return float(arg) + 0.1
 
     # argument specific parser overrides the type specific parser
-    def _parse_c(self, arg: str) -> float:
+    def _parse_c(arg: str) -> float:
         return float(arg)
 
-# when called with the command line arguments ""
+# when called with the command line arguments "2 0.4 0.5 0.6"
 t = Test()
 print(t.a, t.b, t.c) # 3 0.5 0.4
+print(t.t.inner) # 0.6
+print(t.d_) # 0
+```
 """
 
 import sys
@@ -122,15 +133,14 @@ def parser(**kwargs):
 
             used_short = []
             # Adding the arguments to the parser
-            for (name, typ, default_val, parser_fn) in attrs.items():
-                parser_fn = lambda x: parser_fn(self, x) if parser_fn is not None else None
+            for (name, typ, default_val, parser_fn) in attrs:
                 add_arg(self._parser, name, typ, default_val, used_short, parser_fn)
 
             # Parsing the arguments
             args = self._parser.parse_args(args_seq).__dict__
 
             # Setting the attributes
-            for (name, typ, default_val, parser_fn) in attrs.items():
+            for (name, typ, default_val, parser_fn) in attrs:
                 setattr(self, name, args[name.removesuffix('_')])
 
             # Calling the old init
@@ -139,3 +149,5 @@ def parser(**kwargs):
         cls.__init__ = __new_init__
         return cls
     return parser
+
+__version__ = "0.1.0"

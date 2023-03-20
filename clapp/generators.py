@@ -3,6 +3,9 @@ from typing import Any, List
 
 
 def add_arg(parser: ArgumentParser, attr: str, typ:type, default:Any, used_short: List[str], parse = None):
+    """
+    Adds an argument to the given parser.
+    """
     parse = parse if parse is not None else lambda x: typ(x)
     if(attr.endswith('_')):
         attr = attr.removesuffix('_')
