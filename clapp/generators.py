@@ -1,11 +1,16 @@
 from argparse import ArgumentParser
 from typing import Any, List, Optional
+from clapp.readers import Attribute
 
-
-def add_arg(parser: ArgumentParser, attr: str, typ:type, default:Any, used_short: List[str], parse = None) -> Optional[str]:
+def add_arg(parser: ArgumentParser, attribute: Attribute, used_short: List[str]) -> Optional[str]:
     """
     Adds an argument to the given parser.
     """
+    attr = attribute.name
+    typ = attribute.type
+    default = attribute.default
+    parse = attribute.parser
+
     parse = parse if parse is not None else lambda x: typ(x)
     if(attr.endswith('_')):
         attr = attr.removesuffix('_')

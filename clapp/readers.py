@@ -3,13 +3,25 @@ This module contains the functions that read the classes passed to clapp and ext
 """
 from typing import List, Any, Callable, Optional, Tuple
 
-def get_attributes(cls) -> List[Tuple[str, type, Any, Optional[Callable]]]:
+from attr import dataclass
+
+@dataclass
+class Attribute:
+    """
+    Represents an attribute of a class.
+    """
+    name: str
+    type: type
+    default: Any
+    parser: Optional[Callable]
+
+def get_attributes(cls) -> List[Attribute]:
     """
     Returns a list of tuples containing the attribute name, type and default value.
     """
     attrs = cls.__annotations__
 
-    return [(name, typ, getattr(cls, name, None),  get_arg_parser(cls, name) or get_type_parser(cls, typ)) for name, typ in attrs.items()]
+    return [Attribute(name, typ, getattr(cls, name, None), get_arg_parser(cls, name) or get_type_parser(cls, typ)) for name, typ in attrs.items()]
 
 
 def get_type_parser(cls, typ: type) -> Optional[Callable]:

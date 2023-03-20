@@ -145,8 +145,8 @@ def parser(**kwargs):
 
             used_short = []
             # Adding the arguments to the parser
-            for (name, typ, default_val, parser_fn) in attrs:
-                short = add_arg(self._parser, name, typ, default_val, used_short, parser_fn)
+            for attribute in attrs:
+                short = add_arg(self._parser, attribute, used_short)
                 if short is not None:
                     used_short.append(short)
                 
@@ -154,7 +154,8 @@ def parser(**kwargs):
             args = self._parser.parse_args(args_seq).__dict__
 
             # Setting the attributes
-            for (name, typ, default_val, parser_fn) in attrs:
+            for attr in attrs:
+                name = attr.name
                 setattr(self, name, args[name.removesuffix('_')])
 
             # Calling the old init
