@@ -16,8 +16,6 @@ def add_arg(parser: ArgumentParser, attribute: Attribute, used_short: List[str])
     if is_opt:
         typ = get_optional_t(typ)
 
-    print(attr, typ, default, parse, options)
-
     parse = parse if parse is not None else lambda x: typ(x)
     if(attr.endswith('_')):
         attr = attr.removesuffix('_')

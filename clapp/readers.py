@@ -32,6 +32,8 @@ def get_type_parser(cls, typ: type) -> Optional[Callable]:
     """
     Returns the parser function for the given type.
     """
+    if is_optional(typ):
+        typ = get_optional_t(typ)
     type_name = typ.__name__.lower()
     if f"_parse_{type_name}" in cls.__dict__:
         return cls.__dict__[f"_parse_{type_name}"]
