@@ -2,8 +2,10 @@
 This module contains the functions that read the classes passed to clapp and extract the attribute informations
 """
 from typing import List, Any, Callable, Optional, Tuple
+import typing
 
 from attr import dataclass
+
 
 @dataclass
 class Attribute:
@@ -15,6 +17,7 @@ class Attribute:
     default: Any
     parser: Optional[Callable]
     options: Optional[List[str]]
+
 
 def get_attributes(cls) -> List[Attribute]:
     """
@@ -33,6 +36,7 @@ def get_type_parser(cls, typ: type) -> Optional[Callable]:
     if f"_parse_{type_name}" in cls.__dict__:
         return cls.__dict__[f"_parse_{type_name}"]
 
+
 def get_arg_parser(cls, arg: str) -> Optional[Callable]:
     """
     Returns the parser function for the given command line argument.
@@ -40,7 +44,8 @@ def get_arg_parser(cls, arg: str) -> Optional[Callable]:
     arg = arg.lower()
     if f"_parse_{arg}" in cls.__dict__:
         return cls.__dict__[f"_parse_{arg}"]
-    
+
+
 def get_arg_options(cls, arg: str) -> Optional[List[str]]:
     """
     Returns the options for the given command line argument.
@@ -48,3 +53,15 @@ def get_arg_options(cls, arg: str) -> Optional[List[str]]:
     arg = arg.lower()
     if f"_options_{arg}" in cls.__dict__:
         return cls.__dict__[f"_options_{arg}"]
+
+
+def is_optional(t):
+    if not hasattr(t, "__origin__"):
+        return False
+    if not hasattr(t, "__args__"):
+        return False
+    return t.__origin__ == typing.Union and t.__args__[1] == type(None)
+
+
+def get_optional_t(t):
+    return t.__args__[0]

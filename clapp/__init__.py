@@ -99,6 +99,27 @@ class Test:
 # when called with the command line arguments "-a"
 t = Test()
 print(t.a, t.b) # True False
+```
+*options for arguments*
+```python
+from clapp import parser
+
+@parser
+class Test:
+    a_: str
+    b: str
+
+    # options for the argument "a"
+    _options_a = ["a", "b"]
+    _options_b = ["c", "d"]
+
+# when called with the command line arguments "-a a -b c"
+t = Test()
+print(t.a, t.b) # a c
+
+# when called with the command line arguments "-a e -b c"
+t = Test() # an error is raised
+```
 """
 
 import sys

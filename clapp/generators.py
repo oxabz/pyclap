@@ -1,6 +1,7 @@
 from argparse import ArgumentParser
 from typing import Any, List, Optional
-from clapp.readers import Attribute
+from clapp.readers import Attribute, is_optional, get_optional_t
+
 
 def add_arg(parser: ArgumentParser, attribute: Attribute, used_short: List[str]) -> Optional[str]:
     """
@@ -11,6 +12,9 @@ def add_arg(parser: ArgumentParser, attribute: Attribute, used_short: List[str])
     default = attribute.default
     parse = attribute.parser
     options = attribute.options
+    is_opt = is_optional(typ)
+    if is_opt:
+        typ = get_optional_t(typ)
 
     print(attr, typ, default, parse, options)
 
@@ -32,9 +36,9 @@ def add_arg(parser: ArgumentParser, attribute: Attribute, used_short: List[str])
             return None    
 
         if short is None: 
-            parser.add_argument(f"--{attr}", type=parse, default=default, choices=options, required=default is None)
+            parser.add_argument(f"--{attr}", type=parse, default=default, choices=options, required=default is None and not is_opt)
         else:
-            parser.add_argument(f"-{short}", f"--{attr}", type=parse, default=default, choices=options, required=default is None)
+            parser.add_argument(f"-{short}", f"--{attr}", type=parse, default=default, choices=options, required=default is None and not is_opt)
             return short
         
     else:

@@ -2,6 +2,7 @@
 Tests for the `clapp` package.
 """
 
+from typing import Optional
 import clapp
 
 def test_version():
@@ -38,6 +39,17 @@ def test_named_arguments():
         assert False
     except SystemExit:
         assert True
+
+    @clapp.parser()
+    class Test2:
+        not_positional_: Optional[float]
+
+    t = Test2([])
+    assert t.not_positional_ == None
+    t = Test2(["-n", "0.4"])
+    assert t.not_positional_ == 0.4
+
+        
 
 def test_default_values():
     @clapp.parser()
