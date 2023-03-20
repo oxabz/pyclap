@@ -14,6 +14,7 @@ class Attribute:
     type: type
     default: Any
     parser: Optional[Callable]
+    options: Optional[List[str]]
 
 def get_attributes(cls) -> List[Attribute]:
     """
@@ -21,7 +22,7 @@ def get_attributes(cls) -> List[Attribute]:
     """
     attrs = cls.__annotations__
 
-    return [Attribute(name, typ, getattr(cls, name, None), get_arg_parser(cls, name) or get_type_parser(cls, typ)) for name, typ in attrs.items()]
+    return [Attribute(name, typ, getattr(cls, name, None), get_arg_parser(cls, name) or get_type_parser(cls, typ), get_arg_options(cls, name)) for name, typ in attrs.items()]
 
 
 def get_type_parser(cls, typ: type) -> Optional[Callable]:
@@ -39,3 +40,11 @@ def get_arg_parser(cls, arg: str) -> Optional[Callable]:
     arg = arg.lower()
     if f"_parse_{arg}" in cls.__dict__:
         return cls.__dict__[f"_parse_{arg}"]
+    
+def get_arg_options(cls, arg: str) -> Optional[List[str]]:
+    """
+    Returns the options for the given command line argument.
+    """
+    arg = arg.lower()
+    if f"_options_{arg}" in cls.__dict__:
+        return cls.__dict__[f"_options_{arg}"]

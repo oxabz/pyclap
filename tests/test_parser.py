@@ -111,3 +111,30 @@ def test_usage_flags():
     t = Test(["-a", "-b"])
     assert t.a_ == True
     assert t.b_ == True
+
+def test_usage_choices():
+    @clapp.parser()
+    class Test:
+        a_: str = "a"
+        b_: str
+        c: str
+
+        _options_a_ = ["a", "b", "c"]
+        _options_b_ = ["a", "b", "c"]
+        _options_c = ["a", "b", "c"]
+
+    t = Test(["-b", "a", "b"])
+    assert t.a_ == "a"
+    assert t.b_ == "a"
+    assert t.c == "b"
+
+    t = Test(["-a", "c", "-b", "b", "b"])
+    assert t.a_ == "c"
+    assert t.b_ == "b"
+    assert t.c == "b"
+
+    try:
+        t = Test(["-a", "d", "-b", "b", "b"])
+        assert False
+    except SystemExit:
+        assert True

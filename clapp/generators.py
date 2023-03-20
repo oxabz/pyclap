@@ -10,6 +10,9 @@ def add_arg(parser: ArgumentParser, attribute: Attribute, used_short: List[str])
     typ = attribute.type
     default = attribute.default
     parse = attribute.parser
+    options = attribute.options
+
+    print(attr, typ, default, parse, options)
 
     parse = parse if parse is not None else lambda x: typ(x)
     if(attr.endswith('_')):
@@ -27,13 +30,13 @@ def add_arg(parser: ArgumentParser, attribute: Attribute, used_short: List[str])
                 parser.add_argument(f"-{short}", f"--{attr}", action="store_true")
                 return short
             return None    
-        
+
         if short is None: 
-            parser.add_argument(f"--{attr}", type=parse, default=default, required=default is None)
+            parser.add_argument(f"--{attr}", type=parse, default=default, choices=options, required=default is None)
         else:
-            parser.add_argument(f"-{short}", f"--{attr}", type=parse, default=default, required=default is None)
+            parser.add_argument(f"-{short}", f"--{attr}", type=parse, default=default, choices=options, required=default is None)
             return short
         
     else:
-        parser.add_argument(attr, type=parse)
+        parser.add_argument(attr, type=parse, choices=options)
     
