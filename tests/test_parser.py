@@ -33,6 +33,12 @@ def test_named_arguments():
     assert t.positional == 2
     assert t.not_positional_ == 0.4
 
+    try:
+        t = Test(["2"])
+        assert False
+    except SystemExit:
+        assert True
+
 def test_default_values():
     @clapp.parser()
     class Test:

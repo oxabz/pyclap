@@ -134,8 +134,10 @@ def parser(**kwargs):
             used_short = []
             # Adding the arguments to the parser
             for (name, typ, default_val, parser_fn) in attrs:
-                add_arg(self._parser, name, typ, default_val, used_short, parser_fn)
-
+                short = add_arg(self._parser, name, typ, default_val, used_short, parser_fn)
+                if short is not None:
+                    used_short.append(short)
+                
             # Parsing the arguments
             args = self._parser.parse_args(args_seq).__dict__
 

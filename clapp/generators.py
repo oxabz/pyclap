@@ -1,8 +1,8 @@
 from argparse import ArgumentParser
-from typing import Any, List
+from typing import Any, List, Optional
 
 
-def add_arg(parser: ArgumentParser, attr: str, typ:type, default:Any, used_short: List[str], parse = None):
+def add_arg(parser: ArgumentParser, attr: str, typ:type, default:Any, used_short: List[str], parse = None) -> Optional[str]:
     """
     Adds an argument to the given parser.
     """
@@ -14,10 +14,11 @@ def add_arg(parser: ArgumentParser, attr: str, typ:type, default:Any, used_short
             if (short := attr[i]) not in used_short and short != '_':
                 break
         if short is None: 
-            parser.add_argument(f"--{attr}", type=parse, default=default)
+            parser.add_argument(f"--{attr}", type=parse, default=default, required=default is None)
         else:
-            parser.add_argument(f"-{short}", f"--{attr}", type=parse, default=default)
-            used_short.append(short)
+            parser.add_argument(f"-{short}", f"--{attr}", type=parse, default=default, required=default is None)
+            return short
+          
     else:
-        parser.add_argument(attr, type=parse, default=default)
+        parser.add_argument(attr, type=parse)
     
